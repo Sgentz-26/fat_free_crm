@@ -64,7 +64,7 @@ class LeadsController < EntitiesController
     @comment_body = params[:comment_body]
 
     respond_with(@lead) do |_format|
-      if @lead.save_with_permissions(params.permit!)
+      if save_with_permissions(params.permit!, @lead)
         @lead.add_comment_by_user(@comment_body, current_user)
         if called_from_index_page?
           @leads = get_leads
@@ -82,7 +82,7 @@ class LeadsController < EntitiesController
     respond_with(@lead) do |_format|
       # Must set access before user_ids, because user_ids= method depends on access value.
       @lead.access = resource_params[:access] if resource_params[:access]
-      if @lead.update_with_lead_counters(resource_params)
+      if update_with_lead_counters(resource_params, @lead)
         update_sidebar
       else
         @campaigns = Campaign.my(current_user).order('name')
@@ -116,7 +116,7 @@ class LeadsController < EntitiesController
   # PUT /leads/1/promote
   #----------------------------------------------------------------------------
   def promote
-    @account, @opportunity, @contact = @lead.promote(params.permit!)
+    @account, @opportunity, @contact = promote(params.permit!, @lead)
     @accounts = Account.my(current_user).order('name')
     @stage = Setting.unroll(:opportunity_stage)
 
