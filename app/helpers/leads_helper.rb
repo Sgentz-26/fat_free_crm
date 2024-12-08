@@ -117,12 +117,12 @@ module LeadsHelper
   def promote(params, lead)
     account_params = params[:account] || {}
     opportunity_params = params[:opportunity] || {}
-
-    account     = Account.create_or_select_for(lead, account_params)
-    opportunity = Opportunity.create_for(lead, account, opportunity_params)
-    contact     = Contact.create_for(lead, account, opportunity, params)
-
-    [account, opportunity, contact]
+    ActiveRecord::Base.transaction do
+      account     = Account.create_or_select_for(lead, account_params)
+      opportunity = Opportunity.create_for(lead, account, opportunity_params)
+      contact     = Contact.create_for(lead, account, opportunity, params)
+    
+      [account, opportunity, contact]
   end
 
 end
