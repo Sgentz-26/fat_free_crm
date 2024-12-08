@@ -65,7 +65,7 @@ class LeadsController < EntitiesController
     @comment_body = params[:comment_body]
 
     respond_with(@lead) do |_format|
-      if save_with_permissions(params.permit!, @lead)
+      if @lead.save_with_permissions(params.permit!)
         @lead.add_comment_by_user(@comment_body, current_user)
         if called_from_index_page?
           @leads = get_leads
@@ -83,7 +83,7 @@ class LeadsController < EntitiesController
     respond_with(@lead) do |_format|
       # Must set access before user_ids, because user_ids= method depends on access value.
       @lead.access = resource_params[:access] if resource_params[:access]
-      if update_with_lead_counters(resource_params, @lead)
+      if @lead.update_with_lead_counters(resource_params)
         update_sidebar
       else
         @campaigns = Campaign.my(current_user).order('name')

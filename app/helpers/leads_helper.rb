@@ -84,31 +84,4 @@ module LeadsHelper
     summary.join(', ')
   end
 
-  # Save the lead along with its permissions.
-  #----------------------------------------------------------------------------
-  def save_with_permissions(params, lead)
-    lead.campaign = Campaign.find(params[:campaign]) unless params[:campaign].blank?
-    if params[:lead][:access] == "Campaign" && campaign # Copy campaign permissions.
-      save_with_model_permissions(Campaign.find(campaign_id))
-    else
-      lead.attributes = params[:lead]
-      save
-    end
-  end
-
-  # Update lead attributes taking care of campaign lead counters when necessary.
-  #----------------------------------------------------------------------------
-  def update_with_lead_counters(attributes, lead)
-    if campaign_id == attributes[:campaign_id] # Same campaign (if any).
-      lead.attributes = attributes
-      save
-    else                                            # Campaign has been changed -- update lead counters...
-      decrement_leads_count                         # ..for the old campaign...
-      lead.attributes = attributes                  # Assign new campaign.
-      lead = save
-      increment_leads_count                         # ...and now for the new campaign.
-      lead
-    end
-  end
-
 end
