@@ -6,6 +6,7 @@
 # See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
 #------------------------------------------------------------------------------
 class LeadsController < EntitiesController
+  include LeadsHelper
   before_action :get_data_for_sidebar, only: :index
   autocomplete :account, :name, full: true
 

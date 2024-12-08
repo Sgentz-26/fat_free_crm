@@ -115,14 +115,15 @@ module LeadsHelper
   # successful promotion Lead status gets set to :converted.
   #----------------------------------------------------------------------------
   def promote(params, lead)
+    @lead=lead
     account_params = params[:account] || {}
     opportunity_params = params[:opportunity] || {}
-    ActiveRecord::Base.transaction do
-      account     = Account.create_or_select_for(lead, account_params)
-      opportunity = Opportunity.create_for(lead, account, opportunity_params)
-      contact     = Contact.create_for(lead, account, opportunity, params)
+
+    account     = Account.create_or_select_for(@lead, account_params)
+    opportunity = Opportunity.create_for(@lead, account, opportunity_params)
+    contact     = Contact.create_for(@lead, account, opportunity, params)
     
-      [account, opportunity, contact]
+    [account, opportunity, contact]
   end
 
 end
